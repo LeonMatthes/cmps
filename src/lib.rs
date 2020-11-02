@@ -59,12 +59,16 @@ fn template_contents(extension: &str) -> Option<String> {
             match contents {
                 Ok(contents) => return Some(contents),
                 Err(error) => println!(
-                    "Template file {:?} could not be read!\nError: {}",
-                    &path, &error
+                    "Template file '{}' could not be read!\nError: {}",
+                    path.display(),
+                    &error
                 ),
             }
         } else {
-            println!("Template file {:?} does not exist, skipping...", &path);
+            println!(
+                "Template file '{}' does not exist, skipping...",
+                path.display()
+            );
         }
     }
     None
