@@ -1,4 +1,5 @@
 use dirs;
+use std::env;
 use std::fs;
 use std::fs::File;
 use std::io;
@@ -44,8 +45,12 @@ fn fill_file(file: &mut File, extension: &str) {
 }
 
 fn template_contents(extension: &str) -> Option<String> {
-    let extension_path: PathBuf = ["compose", "templates", extension].iter().collect();
-    let base_paths = [dirs::config_dir().unwrap(), dirs::data_local_dir().unwrap()];
+    let extension_path: PathBuf = ["templates", extension].iter().collect();
+    let base_paths = [
+        dirs::config_dir().unwrap().join("compose"),
+        dirs::data_local_dir().unwrap().join("compose"),
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")),
+    ];
     let template_paths = base_paths.iter().map(|path| path.join(&extension_path));
 
     for path in template_paths {
