@@ -62,8 +62,8 @@ fn template_contents(extension: &str) -> Option<String> {
     trace!("Entered template_contents function.");
     let extension_path: PathBuf = ["templates", extension].iter().collect();
     let base_paths = [
-        dirs::config_dir().unwrap().join("compose"),
-        dirs::data_local_dir().unwrap().join("compose"),
+        dirs::config_dir().unwrap().join("cmps"),
+        dirs::data_local_dir().unwrap().join("cmps"),
         PathBuf::from(env!("CARGO_MANIFEST_DIR")),
     ];
     let template_paths = base_paths.iter().map(|path| path.join(&extension_path));
