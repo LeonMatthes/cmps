@@ -1,4 +1,5 @@
 use dirs;
+use log::*;
 use std::env;
 use std::fs;
 use std::fs::File;
@@ -7,44 +8,45 @@ use std::io::prelude::*;
 use std::path::{Path, PathBuf};
 
 pub fn compose<P: AsRef<Path>>(path: P, extension: Option<&str>) -> io::Result<File> {
+    trace!("Entered compose function.");
     let mut file = match fs::metadata(&path) {
         Ok(metadata) => {
             if metadata.len() == 0 {
                 File::create(&path)?
             } else {
-                panic!("File already exists")
+                return Err(io::Error::new(io::ErrorKind::Other, "File already exists!"));
             }
         }
         Err(error) => match error.kind() {
             io::ErrorKind::NotFound => File::create(&path)?,
-            _ => panic!(
-                "Cannot read the metadata of existing file {}\nError: {}",
-                path.as_ref().display(),
-                &error
-            ),
+            _ => return Err(error),
         },
     };
 
     if let Some(extension) = extension {
-        fill_file(&mut file, extension);
+        // Convert Result<usize> into Result<File>
+        if let Err(error) = fill_file(&mut file, extension) {
+            return Err(error);
+        };
     }
     Ok(file)
 }
 
-fn fill_file(file: &mut File, extension: &str) {
+fn fill_file(file: &mut File, extension: &str) -> io::Result<usize> {
+    trace!("Entered fill_file function.");
     let contents = template_contents(extension).unwrap_or_else(|| {
-        println!(
+        warn!(
             "No template file found for extension {}, creating an empty file",
             &extension
         );
         String::default()
     });
 
-    file.write(contents.as_bytes())
-        .expect("Unable to write file");
+    return file.write(contents.as_bytes());
 }
 
 fn template_contents(extension: &str) -> Option<String> {
+    trace!("Entered template_contents function.");
     let extension_path: PathBuf = ["templates", extension].iter().collect();
     let base_paths = [
         dirs::config_dir().unwrap().join("compose"),
@@ -58,14 +60,14 @@ fn template_contents(extension: &str) -> Option<String> {
             let contents = fs::read_to_string(&path);
             match contents {
                 Ok(contents) => return Some(contents),
-                Err(error) => println!(
+                Err(error) => warn!(
                     "Template file '{}' could not be read!\nError: {}",
                     path.display(),
                     &error
                 ),
             }
         } else {
-            println!(
+            info!(
                 "Template file '{}' does not exist, skipping...",
                 path.display()
             );

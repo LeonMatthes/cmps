@@ -16,3 +16,4 @@ keywords = ["compose", "file", "default", "template", "touch"]
 clap = {version = "2.33.3", features = ["yaml"]}
 dirs = "3.0.1"
 log = "0.4.11"
+stderrlog = "0.5.0"
