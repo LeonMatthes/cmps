@@ -1,3 +1,9 @@
+#![warn(missing_docs)]
+//! # cmps
+//!
+//! This library is the backend for the cmps cli tool.
+//! It can be used to create files and automatically fill them with a default template.
+//! The template is determined from the file extension.
 use dirs;
 use log::*;
 use std::env;
@@ -7,6 +13,10 @@ use std::io;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
 
+/// The main function of this library.
+/// It takes a path to either a non-existing file, or an empty existing file.
+/// The extension should usually match the extension in the path, but can be overriden by providing a different extension.
+/// If extension is None, an empty file will be created.
 pub fn compose<P: AsRef<Path>>(path: P, extension: Option<&str>) -> io::Result<File> {
     trace!("Entered compose function.");
     let mut file = match fs::metadata(&path) {
