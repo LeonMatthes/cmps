@@ -1,13 +1,13 @@
-# COMPOSE
+# CMPS
 
 **An intelligent touch!**
 
-An extendable cross-platform CLI tool to create or fill files with a default content.
+`cmps` is short for `compose`, an extendable cross-platform CLI tool to create or fill files with a default content.
 
 ## Usage
 
 ```
-compose [FLAGS] <FILENAME> [EXTENSION]
+cmps [FLAGS] <FILENAME> [EXTENSION]
 
 FLAGS:
     -h, --help       Prints help information

@@ -1,10 +1,10 @@
-name: compose
+name: cmps
 version: "0.0.1"
 author: Björn Daase <bjoern@daase.net>, Leon Matthes <leon@matthes.biz>
 about:
   "An intelligent touch!
   
-  Used to create or fill files with a default content."
+  cmps is short for compose, a tool used to create or fill files with a default content."
 args:
     - FILENAME:
         help: The filename to compose, may point to a non-existing file, or an empty existing file.
