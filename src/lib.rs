@@ -24,7 +24,10 @@ pub fn compose<P: AsRef<Path>>(path: P, extension: Option<&str>) -> io::Result<F
             if metadata.len() == 0 {
                 File::create(&path)?
             } else {
-                return Err(io::Error::new(io::ErrorKind::Other, "File already exists!"));
+                return Err(io::Error::new(
+                    io::ErrorKind::AlreadyExists,
+                    "File already exists!",
+                ));
             }
         }
         Err(error) => match error.kind() {

@@ -25,5 +25,6 @@ fn main() {
     });
     if let Err(error) = cmps::compose(filename, extension) {
         error!("{}", error);
-    };
+        std::process::exit(1);
+    }
 }
