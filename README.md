@@ -19,9 +19,9 @@ ARGS:
     <EXTENSION>    The extension to use, overrides the extension in the filename (if any).
 ```
 
-Custom templates can be placed in your config directory (see https://docs.rs/dirs/latest/dirs/fn.config_dir.html for platform specific details) under `compose/templates`. The name of the template file must match the file extension to be modified.
+Custom templates can be placed in your config directory (see https://docs.rs/dirs/latest/dirs/fn.config_dir.html for platform specific details) under `cmps/templates`. The name of the template file must match the file extension to be modified.
 
-E.g. creating a file `compose/templates/py` with the contents
+E.g. creating a file `cmps/templates/py` with the contents
 ```
 #!/usr/bin/env python3
 # Author: John Doe
