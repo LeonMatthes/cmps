@@ -1,6 +1,6 @@
 [package]
 name = "cmps"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Björn Daase <bjoern@daase.net>", "Leon Matthes <leon@matthes.biz>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
@@ -17,5 +17,3 @@ clap = {version = "2.33.3", features = ["yaml"]}
 dirs = "3.0.1"
 log = "0.4.11"
 stderrlog = "0.5.0"
-termcolor = "1.1"
-atty = "0.2"

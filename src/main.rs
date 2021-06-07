@@ -7,7 +7,9 @@ use std::path::Path;
 
 fn main() {
     let yaml = load_yaml!("cli.yml");
-    let matches = App::from_yaml(yaml).get_matches();
+    let matches = App::from_yaml(yaml)
+        .version(env!("CARGO_PKG_VERSION"))
+        .get_matches();
     let verbose = matches.occurrences_of("verbose") as usize;
 
     stderrlog::new()
