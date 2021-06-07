@@ -12,8 +12,8 @@ fn main() {
 
     stderrlog::new()
         .module(module_path!())
-        .verbosity(verbose)
-        .timestamp(stderrlog::Timestamp::Millisecond)
+        .verbosity(verbose + 1)
+        .timestamp(stderrlog::Timestamp::Off)
         .init()
         .unwrap();
 

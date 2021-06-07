@@ -72,7 +72,10 @@ fn template_contents(extension: &str) -> Option<String> {
         if path.exists() {
             let contents = fs::read_to_string(&path);
             match contents {
-                Ok(contents) => return Some(contents),
+                Ok(contents) => {
+                    info!("Using template file '{}'", path.display());
+                    return Some(contents);
+                }
                 Err(error) => warn!(
                     "Template file '{}' could not be read!\nError: {}",
                     path.display(),
@@ -80,7 +83,7 @@ fn template_contents(extension: &str) -> Option<String> {
                 ),
             }
         } else {
-            info!(
+            debug!(
                 "Template file '{}' does not exist, skipping...",
                 path.display()
             );
