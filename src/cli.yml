@@ -1,5 +1,5 @@
 name: cmps
-version: "0.2.0"
+version: "0.2.1"
 author: Björn Daase <bjoern@daase.net>, Leon Matthes <leon@matthes.biz>
 about:
   "An intelligent touch!
@@ -17,4 +17,4 @@ args:
     - verbose:
         short: v
         multiple: true
-        help: Sets the level of verbosity
+        help: Sets the level of verbosity (provide multiple times for higher levels)
