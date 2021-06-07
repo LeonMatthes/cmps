@@ -17,14 +17,18 @@ fn main() {
         .init()
         .unwrap();
 
-    let filename = matches.value_of("FILENAME").unwrap();
-    let extension = matches.value_of("EXTENSION").or_else(|| {
-        Path::new(filename)
-            .extension()
-            .and_then(|extension| extension.to_str())
-    });
-    if let Err(error) = cmps::compose(filename, extension) {
-        error!("{}", error);
-        std::process::exit(1);
+    if let Some(show_extension) = matches.value_of("show") {
+        cmps::show_extension_info(show_extension);
+    } else {
+        let filename = matches.value_of("FILENAME").unwrap();
+        let extension = matches.value_of("EXTENSION").or_else(|| {
+            Path::new(filename)
+                .extension()
+                .and_then(|extension| extension.to_str())
+        });
+        if let Err(error) = cmps::compose(filename, extension) {
+            error!("{}", error);
+            std::process::exit(1);
+        }
     }
 }
