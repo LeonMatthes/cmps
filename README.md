@@ -7,12 +7,15 @@
 ## Usage
 
 ```
-cmps [FLAGS] <FILENAME> [EXTENSION]
+cmps [FLAGS] [OPTIONS] <FILENAME> [EXTENSION]
 
 FLAGS:
     -h, --help       Prints help information
     -V, --version    Prints version information
-    -v               Sets the level of verbosity
+    -v, --verbose    Sets the level of verbosity (provide multiple times for higher levels)
+
+OPTIONS:
+        --show <extension>    Show the template for this extension and the path to the source file.
 
 ARGS:
     <FILENAME>     The filename to compose, may point to a non-existing file, or an empty existing file.
