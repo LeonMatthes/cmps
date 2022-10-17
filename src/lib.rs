@@ -11,22 +11,38 @@ use std::{
     fs,
     fs::File,
     io,
-    io::prelude::*,
     path::{Path, PathBuf},
 };
 
 mod template;
 
-/// The main function of this library.
-/// It takes a path to either a non-existing file, or an empty existing file.
-/// The extension should usually match the extension in the path, but can be overriden by providing a different extension.
-/// If extension is None, an empty file will be created.
-pub fn compose<P: AsRef<Path>>(path: P, extension: Option<&str>) -> io::Result<File> {
-    trace!("Entered compose function.");
-    let mut file = match fs::metadata(&path) {
+/// Get the template for a given extension.
+pub fn template_contents(extension: &str) -> Option<Vec<u8>> {
+    trace!("Entered template_contents function.");
+
+    for path in template_paths(extension) {
+        if path.exists() {
+            if let Some(contents) = read_template_from(&path) {
+                info!("Using template file '{}'", path.display());
+                return Some(contents);
+            }
+        } else {
+            debug!(
+                "Template file '{}' does not exist, skipping...",
+                path.display()
+            );
+        }
+    }
+    debug!("No template file found for extension: {}", extension);
+    None
+}
+
+/// Try to create the file for the specified path.
+pub fn create_file<P: AsRef<Path>>(path: P) -> io::Result<File> {
+    match fs::metadata(&path) {
         Ok(metadata) => {
             if metadata.len() == 0 {
-                File::create(&path)?
+                File::create(&path)
             } else {
                 return Err(io::Error::new(
                     io::ErrorKind::AlreadyExists,
@@ -35,19 +51,10 @@ pub fn compose<P: AsRef<Path>>(path: P, extension: Option<&str>) -> io::Result<F
             }
         }
         Err(error) => match error.kind() {
-            io::ErrorKind::NotFound => File::create(&path)?,
+            io::ErrorKind::NotFound => File::create(&path),
             _ => return Err(error),
         },
-    };
-
-    if let Some(extension) = extension {
-        // Convert Result<usize> into Result<File>
-        if let Err(error) = fill_file(&mut file, extension) {
-            return Err(error);
-        };
     }
-
-    Ok(file)
 }
 
 /// Display the template contents for this extension and the source file path.
@@ -101,13 +108,14 @@ fn base_paths() -> Vec<PathBuf> {
 
     // the ordering here is important, templates in the first folder in this list have the highest priority
     let base_paths = [
-        dirs::config_dir().unwrap().join("cmps"),
-        dirs::data_local_dir().unwrap().join("cmps"),
-        PathBuf::from(env!("CARGO_MANIFEST_DIR")),
+        dirs::config_dir().map(|dir| dir.join("cmps")),
+        dirs::data_local_dir().map(|dir| dir.join("cmps")),
+        Some(PathBuf::from(env!("CARGO_MANIFEST_DIR"))),
     ];
 
     base_paths
         .iter()
+        .flatten()
         .map(|path| path.join("templates"))
         .collect()
 }
@@ -117,38 +125,6 @@ fn template_paths(extension: &str) -> Vec<PathBuf> {
         .into_iter()
         .map(|path| path.join(extension))
         .collect()
-}
-
-fn fill_file(file: &mut File, extension: &str) -> io::Result<usize> {
-    trace!("Entered fill_file function.");
-    let contents = template_contents(extension).unwrap_or_else(|| {
-        info!(
-            "No template file found for extension {}, creating an empty file",
-            &extension
-        );
-        Vec::new()
-    });
-
-    return file.write(contents.as_slice());
-}
-
-fn template_contents(extension: &str) -> Option<Vec<u8>> {
-    trace!("Entered template_contents function.");
-
-    for path in template_paths(extension) {
-        if path.exists() {
-            if let Some(contents) = read_template_from(&path) {
-                info!("Using template file '{}'", path.display());
-                return Some(contents);
-            }
-        } else {
-            debug!(
-                "Template file '{}' does not exist, skipping...",
-                path.display()
-            );
-        }
-    }
-    None
 }
 
 fn read_template_from<P: AsRef<Path>>(path: P) -> Option<Vec<u8>> {

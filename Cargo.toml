@@ -1,8 +1,8 @@
 [package]
 name = "cmps"
-version = "0.3.2"
+version = "0.3.3"
 authors = ["Björn Daase <bjoern@daase.net>", "Leon Matthes <leon@matthes.biz>"]
-edition = "2018"
+edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "cmps is short for compose, a tool used to create or fill files with a default content."
 repository = "https://github.com/leonmatthes/cmps"
@@ -13,7 +13,7 @@ keywords = ["compose", "file", "default", "template", "touch"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = {version = "2.33.3", features = ["yaml"]}
-dirs = "3.0.1"
-log = "0.4.11"
-stderrlog = "0.5.0"
+clap = {version = "4", features = ["derive"]}
+dirs = "4"
+log = "0.4"
+stderrlog = "0.5"
