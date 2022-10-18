@@ -7,19 +7,35 @@
 ## Usage
 
 ```
-cmps [FLAGS] [OPTIONS] <FILENAME> [EXTENSION]
+cmps [OPTIONS] [FILENAME] [EXTENSION]
 
-FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
-    -v, --verbose    Sets the level of verbosity (provide multiple times for higher levels)
+Arguments:
+  [FILENAME]
+          The filename to compose, may point to a non-existing file, or an empty existing file
 
-OPTIONS:
-        --show <extension>    Show the template for this extension and the path to the source file.
+  [EXTENSION]
+          The extension to use, overrides the extension in the filename (if any)
 
-ARGS:
-    <FILENAME>     The filename to compose, may point to a non-existing file, or an empty existing file.
-    <EXTENSION>    The extension to use, overrides the extension in the filename (if any).
+Options:
+      --show <extension>
+          Show the template for this extension and the path to the source file
+
+      --stdout
+          Write the template for this file to stdout. Does not create or modify the file.
+
+          Useful for integrating with editors like (Neo-)vim.
+
+  -f, --force
+          Overwrite existing files. This will clear the file contents if no template is found
+
+  -v, --verbose...
+          Sets the level of verbosity (provide multiple times for higher levels)
+
+  -h, --help
+          Print help information (use `-h` for a summary)
+
+  -V, --version
+          Print version information
 ```
 
 Custom templates can be placed in your config directory (see https://docs.rs/dirs/latest/dirs/fn.config_dir.html for platform specific details) under `cmps/templates`. The name of the template file must match the file extension to be modified.
