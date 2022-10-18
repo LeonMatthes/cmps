@@ -33,15 +33,25 @@ pub fn template_contents(extension: &str) -> Option<Vec<u8>> {
             );
         }
     }
-    debug!("No template file found for extension: {}", extension);
     None
 }
 
+#[derive(PartialEq, Eq)]
+/// This enum indicates the mode to use when creating a new file.
+pub enum CreationMode {
+    /// default - only overwrite existing files if they are empty.
+    OverwriteEmptyOnly,
+    /// If the Force option is specified, existing files will be overwriten.
+    Force,
+}
+
 /// Try to create the file for the specified path.
-pub fn create_file<P: AsRef<Path>>(path: P) -> io::Result<File> {
+pub fn create_file<P: AsRef<Path>>(path: P, mode: CreationMode) -> io::Result<File> {
     match fs::metadata(&path) {
         Ok(metadata) => {
-            if metadata.len() == 0 {
+            debug!("Existing file found");
+            if metadata.len() == 0 || mode == CreationMode::Force {
+                info!("Overwriting existing file");
                 File::create(&path)
             } else {
                 return Err(io::Error::new(

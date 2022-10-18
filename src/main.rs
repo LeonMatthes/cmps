@@ -1,5 +1,5 @@
 use clap::Parser;
-use cmps;
+use cmps::{self, CreationMode};
 use log::*;
 use std::{io::Write, path::Path, process::ExitCode};
 
@@ -39,9 +39,15 @@ struct Cli {
     show: Option<String>,
 
     #[arg(long)]
-    /// Write anything that cmps would write into the file to stdout instead.
-    /// Does not create or modify the file. Useful for integrating with editors like (Neo-)vim.
+    /// Write the template for this file to stdout. Does not create or modify the file.
+    ///
+    /// Useful for integrating with editors like (Neo-)vim.
     stdout: bool,
+
+    #[arg(long, short)]
+    /// Overwrite existing files.
+    /// This will clear the file contents if no template is found.
+    force: bool,
 
     #[arg(long,short,action=clap::ArgAction::Count)]
     /// Sets the level of verbosity (provide multiple times for higher levels)
@@ -50,8 +56,8 @@ struct Cli {
 
 fn main() -> ExitCode {
     let cli = Cli::parse();
-    let verbose = cli.verbose as usize;
 
+    let verbose = cli.verbose as usize;
     stderrlog::new()
         .module(module_path!())
         .verbosity(verbose + 1)
@@ -80,7 +86,13 @@ fn main() -> ExitCode {
                 return ExitCode::FAILURE;
             }
         } else {
-            let file = cmps::create_file(&*filename);
+            let mode = if cli.force {
+                CreationMode::Force
+            } else {
+                CreationMode::OverwriteEmptyOnly
+            };
+
+            let file = cmps::create_file(&*filename, mode);
 
             let mut file = match file {
                 Ok(file) => file,
