@@ -47,5 +47,13 @@ E.g. creating a file `cmps/templates/py` with the contents
 ```
 will insert the shebang and the author name when creating python files with compose.
 
+## Local (per-project) configuration
+If you want to use different templates for a specific project, you can create a `.cmps` directory to add additional templates or overwrite existing ones.
+A good use-case for this is if you want to automatically insert a specific license in one of your projects, but not everywhere.
+
+Like in the `config` directory, templates must be placed under a `templates` subfolder in this `.cmps` directory.
+
+E.g.: `/my/important/project/.cmps/templates/py` would overwrite the template used for python files in the `/my/important/project/` directory and its subdirectories.
+
 ## Authors
 [Björn Daase](https://github.com/BjoernDaase) and [Leon Matthes](https://github.com/LeonMatthes)

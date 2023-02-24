@@ -1,6 +1,6 @@
 [package]
 name = "cmps"
-version = "0.3.4"
+version = "0.4.0"
 authors = ["Björn Daase <bjoern@daase.net>", "Leon Matthes <leon@matthes.biz>"]
 edition = "2021"
 license = "MIT OR Apache-2.0"

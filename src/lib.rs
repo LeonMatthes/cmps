@@ -14,8 +14,6 @@ use std::{
     path::{Path, PathBuf},
 };
 
-mod template;
-
 /// Get the template for a given extension.
 pub fn template_contents(extension: &str) -> Option<Vec<u8>> {
     trace!("Entered template_contents function.");
@@ -56,7 +54,7 @@ pub fn create_file<P: AsRef<Path>>(path: P, mode: CreationMode) -> io::Result<Fi
             } else {
                 return Err(io::Error::new(
                     io::ErrorKind::AlreadyExists,
-                    "File already exists!",
+                    "File already exists! - Use '-f'/'--force' to overwrite anyway.",
                 ));
             }
         }
@@ -113,20 +111,61 @@ pub fn show_extension_info(extension: &str) {
     }
 }
 
+fn local_config_directories() -> Vec<PathBuf> {
+    trace!("Entered local_config_directories function");
+
+    if let Ok(mut current_dir) = std::env::current_dir() {
+        let mut config_dirs = Vec::new();
+
+        loop {
+            debug!(
+                "Searching '{}' for '.cmps' directory",
+                current_dir.to_string_lossy()
+            );
+
+            let local_config_dir = current_dir.join(".cmps");
+            let has_cmps_dir = local_config_dir.try_exists().unwrap_or_else(|e| {
+                warn!(
+                    "Failed to query existence of '.cmps' directory in {}! - Error: {e}",
+                    current_dir.to_string_lossy()
+                );
+                false
+            });
+            if has_cmps_dir {
+                info!(
+                    "Found local configuration directory at: '{}'",
+                    local_config_dir.to_string_lossy()
+                );
+                config_dirs.push(local_config_dir);
+            }
+
+            if !current_dir.pop() {
+                return config_dirs;
+            }
+        }
+    }
+    Vec::new()
+}
+
 fn base_paths() -> Vec<PathBuf> {
     trace!("Entered base_paths function.");
 
-    // the ordering here is important, templates in the first folder in this list have the highest priority
+    // The ordering here is important, templates in the first folder in this list have the highest priority
     let base_paths = [
         dirs::config_dir().map(|dir| dir.join("cmps")),
         dirs::data_local_dir().map(|dir| dir.join("cmps")),
         Some(PathBuf::from(env!("CARGO_MANIFEST_DIR"))),
-    ];
+    ]
+    .into_iter()
+    .flatten();
 
-    base_paths
-        .iter()
-        .flatten()
-        .map(|path| path.join("templates"))
+    local_config_directories()
+        .into_iter()
+        .chain(base_paths)
+        .map(|mut path| {
+            path.push("templates");
+            path
+        })
         .collect()
 }
 
